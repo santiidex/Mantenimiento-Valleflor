@@ -28,8 +28,18 @@
     </div>
   </header>
 
+  <nav class="module-nav">
+    <button class="nav-btn active" data-target="dashboard">Dashboard</button>
+    <button class="nav-btn" data-target="planning">Planificación</button>
+    <button class="nav-btn" data-target="equipment">Registro de equipos</button>
+    <button class="nav-btn" data-target="inventory">Inventario</button>
+    <button class="nav-btn" data-target="maintenance">Registro de mantenimiento</button>
+    <button class="nav-btn" data-target="life">Hojas de vida</button>
+    <button class="nav-btn" data-target="staff">Gestión de personal</button>
+  </nav>
+
   <main>
-    <section class="card dashboard">
+    <section id="dashboard" class="card module active">
       <h2>1. Dashboard</h2>
       <div class="kpi-grid" id="kpiGrid"></div>
       <div class="chart-grid">
@@ -39,7 +49,7 @@
       <div class="summary" id="summaryByFinca"></div>
     </section>
 
-    <section class="card planning">
+    <section id="planning" class="card module">
       <div class="section-header">
         <h2>2. Planificación (calendario avanzado)</h2>
         <div class="inline-actions">
@@ -90,7 +100,7 @@
       </div>
     </section>
 
-    <section class="card equipment">
+    <section id="equipment" class="card module">
       <h2>3. Registro de equipos</h2>
       <form id="equipmentForm" class="inline-form">
         <label>Categoría
@@ -131,7 +141,7 @@
       </div>
     </section>
 
-    <section class="card inventory">
+    <section id="inventory" class="card module">
       <h2>4. Inventario</h2>
       <div class="inline-form">
         <label>Filtro categoría
@@ -156,7 +166,7 @@
       </div>
     </section>
 
-    <section class="card maintenance">
+    <section id="maintenance" class="card module">
       <h2>5. Registro de mantenimiento</h2>
       <form id="maintenanceForm" class="inline-form">
         <label>Equipo
@@ -189,7 +199,7 @@
       <div class="recent-maintenance" id="recentMaintenance"></div>
     </section>
 
-    <section class="card life">
+    <section id="life" class="card module">
       <h2>6. Hojas de vida</h2>
       <div class="inline-form">
         <label>Finca
@@ -214,7 +224,7 @@
       </div>
     </section>
 
-    <section class="card staff">
+    <section id="staff" class="card module">
       <h2>7. Gestión de personal</h2>
       <form id="staffForm" class="inline-form">
         <label>Nombre

@@ -79,6 +79,13 @@ const state = {
 const qs = (sel) => document.querySelector(sel);
 const qsa = (sel) => Array.from(document.querySelectorAll(sel));
 
+function setActiveModule(targetId) {
+  qsa(".module").forEach((section) => section.classList.toggle("active", section.id === targetId));
+  qsa(".nav-btn").forEach((btn) => btn.classList.toggle("active", btn.dataset.target === targetId));
+  const section = document.getElementById(targetId);
+  if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function initFilters() {
   const fincas = ["Todos", ...new Set(equipment.map((e) => e.finca))];
   const categories = ["Todos", ...new Set(equipment.map((e) => e.category))];
@@ -521,6 +528,10 @@ function renderInventorySearchLabels() {
   qs("#equipmentOptions").innerHTML = equipment.map((e) => `<option value="${e.code}">${e.code} - ${e.name}</option>`).join("");
 }
 
+function initNavigation() {
+  qsa(".nav-btn").forEach((btn) => btn.addEventListener("click", () => setActiveModule(btn.dataset.target)));
+}
+
 function boot() {
   initFilters();
   renderDashboardOptionsListeners();
@@ -529,6 +540,7 @@ function boot() {
   renderLifeListeners();
   renderMaintenanceListeners();
   renderStaffListeners();
+  initNavigation();
 
   renderKPIs();
   renderCalendar(qs("#planningMonth").value);
