@@ -36,6 +36,7 @@
     <button class="nav-btn" data-target="maintenance">Registro de mantenimiento</button>
     <button class="nav-btn" data-target="life">Hojas de vida</button>
     <button class="nav-btn" data-target="staff">Gestión de personal</button>
+    <button class="nav-btn" data-target="backup">Respaldo / Importación</button>
   </nav>
 
   <main>
@@ -45,6 +46,7 @@
       <div class="chart-grid">
         <div class="chart" id="taskChart"></div>
         <div class="chart" id="costChart"></div>
+        <div class="chart" id="workloadChart"></div>
       </div>
       <div class="summary" id="summaryByFinca"></div>
     </section>
@@ -55,6 +57,18 @@
         <div class="inline-actions">
           <label>Mes
             <input type="month" id="planningMonth" />
+          </label>
+          <label>Finca
+            <select id="planningFinca"></select>
+          </label>
+          <label>Estado de tarea
+            <select id="planningStatus">
+              <option value="Todas">Todas</option>
+              <option value="Planificado">Planificada</option>
+              <option value="En progreso">En progreso</option>
+              <option value="Completado">Completada</option>
+              <option value="Vencida">Vencida</option>
+            </select>
           </label>
           <button id="generatePreventive">Regenerar preventivos 12 meses</button>
         </div>
@@ -69,6 +83,9 @@
             </label>
             <label>Equipo
               <select id="taskEquipment"></select>
+            </label>
+            <label>Responsable
+              <select id="taskResponsible"></select>
             </label>
             <label>Tipo
               <select id="taskType">
@@ -93,9 +110,13 @@
             <label>Detalles
               <textarea id="taskNotes" rows="2" placeholder="Hallazgos, repuestos usados..."></textarea>
             </label>
+            <label class="checkbox">
+              <input type="checkbox" id="taskCreateMaintenance" /> Registrar mantenimiento al completar
+            </label>
             <button type="submit">Guardar tarea</button>
           </form>
           <div id="taskFeedback" class="feedback"></div>
+          <div class="task-details" id="taskDetails"></div>
         </div>
       </div>
     </section>
@@ -251,6 +272,18 @@
           <tbody id="staffTable"></tbody>
         </table>
       </div>
+    </section>
+
+    <section id="backup" class="card module">
+      <h2>8. Respaldo / Importación</h2>
+      <div class="inline-form">
+        <button id="exportBackup">Descargar respaldo JSON</button>
+        <label>Restaurar desde JSON
+          <textarea id="importPayload" rows="6" placeholder='Pega aquí el contenido del respaldo'></textarea>
+        </label>
+        <button id="importBackup">Restaurar datos</button>
+      </div>
+      <p class="muted">El respaldo incluye equipos, mantenimientos, tareas de planificación, inventario y personal.</p>
     </section>
   </main>
 
