@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Mantenimiento - Valleflor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Programa de Mantenimiento - Valleflor</h1>
+      <p>Visión integral de equipos, inventario y tareas preventivas</p>
+    </div>
+    <div class="filters">
+      <label>Finca
+        <select id="dashboardFincaFilter"></select>
+      </label>
+      <label>Tipo de equipo
+        <select id="dashboardCategoryFilter"></select>
+      </label>
+      <label>Año
+        <select id="dashboardYearFilter"></select>
+      </label>
+      <label>Tipo de mantenimiento
+        <select id="dashboardTypeFilter"></select>
+      </label>
+    </div>
+  </header>
+
+  <nav class="module-nav">
+    <button class="nav-btn active" data-target="dashboard">Dashboard</button>
+    <button class="nav-btn" data-target="planning">Planificación</button>
+    <button class="nav-btn" data-target="equipment">Registro de equipos</button>
+    <button class="nav-btn" data-target="inventory">Inventario</button>
+    <button class="nav-btn" data-target="maintenance">Registro de mantenimiento</button>
+    <button class="nav-btn" data-target="life">Hojas de vida</button>
+    <button class="nav-btn" data-target="staff">Gestión de personal</button>
+    <button class="nav-btn" data-target="backup">Respaldo / Importación</button>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="card module active">
+      <h2>1. Dashboard</h2>
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="chart-grid">
+        <div class="chart" id="taskChart"></div>
+        <div class="chart" id="costChart"></div>
+        <div class="chart" id="workloadChart"></div>
+      </div>
+      <div class="summary" id="summaryByFinca"></div>
+    </section>
+
+    <section id="planning" class="card module">
+      <div class="section-header">
+        <h2>2. Planificación (calendario avanzado)</h2>
+        <div class="inline-actions">
+          <label>Mes
+            <input type="month" id="planningMonth" />
+          </label>
+          <label>Finca
+            <select id="planningFinca"></select>
+          </label>
+          <label>Estado de tarea
+            <select id="planningStatus">
+              <option value="Todas">Todas</option>
+              <option value="Planificado">Planificada</option>
+              <option value="En progreso">En progreso</option>
+              <option value="Completado">Completada</option>
+              <option value="Vencida">Vencida</option>
+            </select>
+          </label>
+          <button id="generatePreventive">Regenerar preventivos 12 meses</button>
+        </div>
+      </div>
+      <div class="planning-grid">
+        <div class="calendar" id="calendar"></div>
+        <div class="task-form">
+          <h3>Crear / completar tarea</h3>
+          <form id="taskForm">
+            <label>Fecha
+              <input type="date" id="taskDate" required />
+            </label>
+            <label>Equipo
+              <select id="taskEquipment"></select>
+            </label>
+            <label>Responsable
+              <select id="taskResponsible"></select>
+            </label>
+            <label>Tipo
+              <select id="taskType">
+                <option value="Preventivo">Preventivo</option>
+                <option value="Correctivo">Correctivo</option>
+                <option value="Predictivo">Predictivo</option>
+              </select>
+            </label>
+            <label>Descripción
+              <input type="text" id="taskDescription" placeholder="Lubricar, inspeccionar..." />
+            </label>
+            <label>Estado
+              <select id="taskStatus">
+                <option value="Planificado">Planificado</option>
+                <option value="En progreso">En progreso</option>
+                <option value="Completado">Completado</option>
+              </select>
+            </label>
+            <label>Costo (al completar)
+              <input type="number" id="taskCost" min="0" step="0.01" />
+            </label>
+            <label>Detalles
+              <textarea id="taskNotes" rows="2" placeholder="Hallazgos, repuestos usados..."></textarea>
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" id="taskCreateMaintenance" /> Registrar mantenimiento al completar
+            </label>
+            <button type="submit">Guardar tarea</button>
+          </form>
+          <div id="taskFeedback" class="feedback"></div>
+          <div class="task-details" id="taskDetails"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="equipment" class="card module">
+      <h2>3. Registro de equipos</h2>
+      <form id="equipmentForm" class="inline-form">
+        <label>Categoría
+          <input type="text" id="equipmentCategory" required />
+        </label>
+        <label>Nombre
+          <input type="text" id="equipmentName" required />
+        </label>
+        <label>Finca
+          <input type="text" id="equipmentFinca" required />
+        </label>
+        <label>Estado
+          <select id="equipmentStatus">
+            <option value="OPERATIVO">OPERATIVO</option>
+            <option value="FUERA_DE_SERVICIO">FUERA DE SERVICIO</option>
+          </select>
+        </label>
+        <label>Último mantenimiento realizado
+          <input type="date" id="equipmentLastMaintenance" required />
+        </label>
+        <label>Repuestos críticos
+          <input type="text" id="equipmentCritical" placeholder="Filtro, banda..." />
+        </label>
+        <label>Observaciones
+          <input type="text" id="equipmentNotes" />
+        </label>
+        <button type="submit">Registrar equipo</button>
+      </form>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th><th>Nombre</th><th>Finca</th><th>Categoría</th><th>Estado</th><th>Último mant.</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="equipmentTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="inventory" class="card module">
+      <h2>4. Inventario</h2>
+      <div class="inline-form">
+        <label>Filtro categoría
+          <input type="text" id="inventoryCategory" placeholder="Lubricantes, bandas..." />
+        </label>
+        <label>Filtro finca
+          <input type="text" id="inventoryFinca" placeholder="Finca Norte" />
+        </label>
+        <label>Buscar por código
+          <input list="inventorySearchOptions" id="inventorySearch" placeholder="Ingrese código" />
+          <datalist id="inventorySearchOptions"></datalist>
+        </label>
+        <button id="inventoryExport">Exportar a Excel (.csv)</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Código</th><th>Nombre</th><th>Finca</th><th>Categoría</th><th>Stock</th><th>Crítico</th></tr>
+          </thead>
+          <tbody id="inventoryTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="maintenance" class="card module">
+      <h2>5. Registro de mantenimiento</h2>
+      <form id="maintenanceForm" class="inline-form">
+        <label>Equipo
+          <input list="equipmentOptions" id="maintenanceEquipment" required />
+          <datalist id="equipmentOptions"></datalist>
+        </label>
+        <label>Tipo
+          <select id="maintenanceType">
+            <option value="Preventivo">Preventivo</option>
+            <option value="Correctivo">Correctivo</option>
+            <option value="Predictivo">Predictivo</option>
+            <option value="Inspección">Inspección</option>
+            <option value="Calibración">Calibración</option>
+          </select>
+        </label>
+        <label>Responsable
+          <input type="text" id="maintenanceResponsible" required />
+        </label>
+        <label>Repuestos
+          <input type="text" id="maintenanceParts" placeholder="Filtro, rodamientos..." />
+        </label>
+        <label>Costo
+          <input type="number" id="maintenanceCost" min="0" step="0.01" />
+        </label>
+        <label>Fecha
+          <input type="date" id="maintenanceDate" required />
+        </label>
+        <button type="submit">Registrar</button>
+      </form>
+      <div class="recent-maintenance" id="recentMaintenance"></div>
+    </section>
+
+    <section id="life" class="card module">
+      <h2>6. Hojas de vida</h2>
+      <div class="inline-form">
+        <label>Finca
+          <select id="lifeFinca"></select>
+        </label>
+        <label>Código
+          <select id="lifeEquipment"></select>
+        </label>
+      </div>
+      <div class="life-wrapper">
+        <div class="life-card" id="lifeCard"></div>
+        <div class="life-history">
+          <h3>Histórico de mantenimientos</h3>
+          <div id="lifeChart" class="chart"></div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Fecha</th><th>Tipo</th><th>Responsable</th><th>Costo</th></tr></thead>
+              <tbody id="lifeTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="staff" class="card module">
+      <h2>7. Gestión de personal</h2>
+      <form id="staffForm" class="inline-form">
+        <label>Nombre
+          <input type="text" id="staffName" required />
+        </label>
+        <label>Especialidad
+          <input type="text" id="staffSpecialty" required />
+        </label>
+        <label>Contacto
+          <input type="text" id="staffContact" required />
+        </label>
+        <label>Estado
+          <select id="staffStatus">
+            <option value="Disponible">Disponible</option>
+            <option value="Ocupado">Ocupado</option>
+            <option value="De baja">De baja</option>
+          </select>
+        </label>
+        <button type="submit">Registrar técnico</button>
+      </form>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Nombre</th><th>Especialidad</th><th>Contacto</th><th>Estado</th></tr></thead>
+          <tbody id="staffTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="backup" class="card module">
+      <h2>8. Respaldo / Importación</h2>
+      <div class="inline-form">
+        <button id="exportBackup">Descargar respaldo JSON</button>
+        <label>Restaurar desde JSON
+          <textarea id="importPayload" rows="6" placeholder='Pega aquí el contenido del respaldo'></textarea>
+        </label>
+        <button id="importBackup">Restaurar datos</button>
+      </div>
+      <p class="muted">El respaldo incluye equipos, mantenimientos, tareas de planificación, inventario y personal.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Prototipo funcional para la gestión de mantenimiento de Valleflor con flujos conectados entre equipos, planificación, inventario y hojas de vida.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
